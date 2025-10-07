@@ -1,0 +1,17 @@
+{
+  "name": "@arc/maze-app",
+  "version": "1.0.0",
+  "description": "ARC Maze React Admin App",
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "dev": "wp-scripts start"
+  },
+  "dependencies": {
+    "@wordpress/element": "^5.0.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^26.0.0"
+  }
+}
