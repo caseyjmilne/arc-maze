@@ -1,82 +1,14 @@
-.arc-maze-chat-container {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 200px);
-    max-width: 1200px;
-    margin: 20px 0;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #fff;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Scope all styles to our app container */
+#arc-maze-admin-root {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-.arc-maze-response-area {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background: #f9f9f9;
-    border-bottom: 1px solid #ddd;
-}
-
-.arc-maze-response {
-    background: #fff;
-    padding: 15px;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-.arc-maze-placeholder {
-    color: #999;
-    text-align: center;
-    padding: 40px;
-    font-style: italic;
-}
-
-.arc-maze-input-area {
-    padding: 20px;
-    background: #fff;
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-}
-
-.arc-maze-input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 14px;
-    resize: vertical;
-    min-height: 60px;
-}
-
-.arc-maze-input:focus {
-    outline: none;
-    border-color: #2271b1;
-    box-shadow: 0 0 0 1px #2271b1;
-}
-
-.arc-maze-send-button {
-    padding: 10px 24px;
-    background: #2271b1;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background 0.2s;
-    height: fit-content;
-}
-
-.arc-maze-send-button:hover:not(:disabled) {
-    background: #135e96;
-}
-
-.arc-maze-send-button:disabled {
-    background: #ddd;
-    color: #999;
-    cursor: not-allowed;
+#arc-maze-admin-root * {
+  font-family: inherit;
 }

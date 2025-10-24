@@ -32,7 +32,14 @@ class WorkflowRoutes
         register_rest_route('arc-maze/v1', '/message', [
             'methods' => 'POST',
             'callback' => [$this, 'handleMessage'],
-            'permission_callback' => [$this, 'checkPermission']
+            'permission_callback' => [$this, 'checkPermission'],
+            'args' => [
+                'message' => [
+                    'required' => true,
+                    'type' => 'string',
+                    'sanitize_callback' => 'sanitize_textarea_field'
+                ]
+            ]
         ]);
     }
 
@@ -80,12 +87,90 @@ class WorkflowRoutes
             return new \WP_Error('empty_message', 'Message cannot be empty', ['status' => 400]);
         }
 
-        // TODO: Implement Anthropic API call here
+        // Get API key from environment
+        $apiKey = $this->getAnthropicApiKey();
+
+        if (!$apiKey) {
+            return new \WP_Error(
+                'api_key_missing',
+                'ANTHROPIC_API_KEY not found. Check .env file and ensure it is loaded.',
+                ['status' => 500]
+            );
+        }
+
+        // Initialize client with explicit API key
+        $client = new AnthropicClient($apiKey);
+
+        if (!$client->isConfigured()) {
+            return new \WP_Error(
+                'client_init_failed',
+                'Failed to initialize Anthropic client. Check error logs.',
+                ['status' => 500]
+            );
+        }
+
+        // Load system prompt from file
+        $systemPromptFile = ARC_MAZE_PATH . 'agent/agent-system-prompt.md';
+        $systemPrompt = '';
+
+        if (file_exists($systemPromptFile)) {
+            $systemPrompt = file_get_contents($systemPromptFile);
+        }
+
+        $response = $client->sendMessage($message, $systemPrompt);
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
 
         return rest_ensure_response([
             'success' => true,
-            'message' => 'Message received successfully'
+            'message' => $response
         ]);
+    }
+
+    private function getAnthropicApiKey()
+    {
+        // Try multiple sources
+        if (isset($_SERVER['ANTHROPIC_API_KEY'])) {
+            return $_SERVER['ANTHROPIC_API_KEY'];
+        }
+
+        if (isset($_ENV['ANTHROPIC_API_KEY'])) {
+            return $_ENV['ANTHROPIC_API_KEY'];
+        }
+
+        $key = getenv('ANTHROPIC_API_KEY');
+        if ($key) {
+            return $key;
+        }
+
+        // Manually parse .env file
+        $envPath = ARC_MAZE_PATH . '.env';
+
+        if (file_exists($envPath)) {
+            $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+            foreach ($lines as $line) {
+                // Skip comments
+                if (strpos(trim($line), '#') === 0) {
+                    continue;
+                }
+
+                // Parse KEY=VALUE
+                if (strpos($line, '=') !== false) {
+                    list($name, $value) = explode('=', $line, 2);
+                    $name = trim($name);
+                    $value = trim($value);
+
+                    if ($name === 'ANTHROPIC_API_KEY') {
+                        return $value;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     public function checkPermission($request)

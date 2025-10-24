@@ -48,7 +48,7 @@ class AdminPage
 
         wp_enqueue_style(
             'arc-maze-admin',
-            ARC_MAZE_URL . 'apps/maze/build/index.css',
+            ARC_MAZE_URL . 'apps/maze/build/style-index.css',
             [],
             $asset['version']
         );

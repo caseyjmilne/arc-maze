@@ -22,6 +22,16 @@ if (file_exists(ARC_MAZE_PATH . 'vendor/autoload.php')) {
     require_once ARC_MAZE_PATH . 'vendor/autoload.php';
 }
 
+// Load environment variables
+if (class_exists('Dotenv\Dotenv')) {
+    try {
+        $dotenv = \Dotenv\Dotenv::createImmutable(ARC_MAZE_PATH);
+        $dotenv->load();
+    } catch (\Exception $e) {
+        error_log('ARC Maze: Failed to load .env: ' . $e->getMessage());
+    }
+}
+
 class Maze
 {
     private static $instance = null;
